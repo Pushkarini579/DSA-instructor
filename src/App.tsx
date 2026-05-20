@@ -28,7 +28,14 @@ const App: React.FC = () => {
         body: JSON.stringify({ message: text }),
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await response.json();
+      } else {
+        const textError = await response.text();
+        throw new Error(`Server returned non-JSON response: ${textError.substring(0, 100)}...`);
+      }
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to get response from AI');
