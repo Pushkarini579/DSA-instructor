@@ -5,10 +5,9 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "dsa.js",
   "scripts": {
     "start": "node api/chat.js",
-    "build": "cd frontend && npm install && npm run build",
+    "build": "cd frontend && npm install && npm run build && cd .. && rm -rf dist && mv frontend/dist ./dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
