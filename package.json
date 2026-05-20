@@ -7,7 +7,8 @@
   "type": "module",
   "main": "dsa.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node api/chat.js",
+    "build": "cd frontend && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

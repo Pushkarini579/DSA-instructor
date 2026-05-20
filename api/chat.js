@@ -15,27 +15,42 @@ app.use(express.json());
 // Chatbot Logic
 const apiKey = process.env.GEMINI_API_KEY;
 
-if (!apiKey || apiKey === "YOUR_API_KEY") {
-  console.error("CRITICAL ERROR: GEMINI_API_KEY is not set in .env file.");
-  process.exit(1);
-}
-
-const ai = new GoogleGenAI({ apiKey });
+// On Vercel, we shouldn't exit the process. Instead, we can return an error in the route.
+const ai = apiKey && apiKey !== "YOUR_API_KEY" ? new GoogleGenAI({ apiKey }) : null;
 
 async function main(userMessage) {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: userMessage,
-    config: {
+  if (!ai) {
+    throw new Error("GEMINI_API_KEY is not configured properly.");
+  }
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
       systemInstruction: "You are a DSA instructor. Reply only questions related to Data Structures and Algorithms. If the question is not related to DSA, reply with 'I can only answer questions related to Data Structures and Algorithms.'. Reply in simplest way",
-    },
-  });
-  return response.text;
+      contents: userMessage,
+    });
+    
+    if (!response || !response.text) {
+      throw new Error("Empty response from AI model");
+    }
+    
+    return response.text;
+  } catch (error) {
+    console.error('Error calling Gemini API:', error);
+    throw error;
+  }
 }
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('DSA Instructor API is running');
+});
+
 app.post('/chat', async (req, res) => {
   try {
+    if (!apiKey || apiKey === "YOUR_API_KEY") {
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not set on the server.' });
+    }
     const { message } = req.body;
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
@@ -50,6 +65,11 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
+
+export default app;
