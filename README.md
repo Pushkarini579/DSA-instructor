@@ -1,87 +1,73 @@
-# 🎓 DSA Instructor AI
+# React + TypeScript + Vite
 
-A modern, full-stack chatbot designed to help students master Data Structures and Algorithms. Powered by Google's **Gemini 2.5 Flash**, this AI tutor provides simple, clear explanations and code examples exclusively for DSA topics.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-![Modern UI](https://img.shields.io/badge/UI-Modern%20&%20Clean-blue)
-![AI Model](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-green)
-![React](https://img.shields.io/badge/Frontend-React%2019-blue)
-![Express](https://img.shields.io/badge/Backend-Express%205-lightgrey)
+Currently, two official plugins are available:
 
-## ✨ Features
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
--   **Specialized Knowledge:** Trained to answer ONLY DSA-related questions.
--   **Markdown Support:** Beautifully rendered code snippets and structured explanations.
--   **Interactive UI:** Clean, modern interface with a responsive sidebar for topic navigation.
--   **Quick Actions:** One-click buttons for "Explain Simply" or "Give me example".
--   **Real-time Interaction:** Fast responses powered by the latest Gemini Flash model.
+## React Compiler
 
-## 🛠️ Tech Stack
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### Frontend
--   **Framework:** React 19 (TypeScript)
--   **Build Tool:** Vite
--   **Styling:** Tailwind CSS v4
--   **Icons:** Lucide React
--   **Markdown:** React Markdown & Remark GFM
+## Expanding the ESLint configuration
 
-### Backend
--   **Runtime:** Node.js
--   **Framework:** Express 5
--   **AI Integration:** Google Generative AI SDK (@google/genai)
--   **Model:** `gemini-2.5-flash`
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## 🚀 Getting Started
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### Prerequisites
--   Node.js (v18 or higher)
--   A Google Gemini API Key ([Get one here](https://aistudio.google.com/))
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-username/dsa-instructor-ai.git
-cd dsa-instructor-ai
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-### 2. Backend Setup
-1.  Install dependencies:
-    ```bash
-    npm install
-    ```
-2.  Create a `.env` file in the root directory:
-    ```env
-    GEMINI_API_KEY=your_actual_api_key_here
-    PORT=3000
-    ```
-3.  Start the server:
-    ```bash
-    npm start
-    ```
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### 3. Frontend Setup
-1.  Navigate to the frontend directory:
-    ```bash
-    cd frontend
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Start the development server:
-    ```bash
-    npm run dev
-    ```
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## 📝 Usage
-
--   **Ask Anything:** Type your DSA question in the chat box.
--   **Select Topics:** Use the sidebar to quickly jump into specific topics like Linked Lists, Trees, or Graphs.
--   **Simple Mode:** Use the "Explain simply" action if a concept feels too complex.
-
-## 🛡️ Security
-
--   Ensure your `.env` file is never committed to GitHub.
--   The backend includes basic CORS configuration and input validation.
-
-## 📄 License
-
-This project is licensed under the ISC License - see the [package.json](package.json) file for details.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
