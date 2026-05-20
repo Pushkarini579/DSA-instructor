@@ -28,11 +28,11 @@ const App: React.FC = () => {
         body: JSON.stringify({ message: text }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to get response from AI');
-      }
-
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get response from AI');
+      }
       
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -41,11 +41,11 @@ const App: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Sorry, I encountered an error. Please check if the backend is running.',
+        text: `Error: ${error.message || 'I encountered an issue. Please check your API key in Vercel settings.'}`,
         sender: 'bot',
       };
       setMessages((prev) => [...prev, errorMessage]);
